@@ -1,0 +1,45 @@
+// Prevents additional console window on Windows in release, DO NOT REMOVE!!
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
+use serde::{Deserialize, Serialize};
+
+/*
+    Sample API response:
+    {"status":"success","result":"k02yl"}
+ */
+#[derive(serde::Deserialize)]
+struct Response {
+    status: Status,
+    result: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub enum Status {
+    #[serde(rename = "success")]
+    Success,
+    #[serde(rename = "error")]
+    _Error
+}
+
+fn create_clip (url: &str) -> Result<String, Box<dyn std::error::Error>> {
+    let client = reqwest::blocking::Client::new();
+    let res = client.post("https://interclip.app/api/set")
+        .form(&[("url", url)])
+        .send()?;
+
+    let response: Response = res.json()?;
+    Ok(response.result)
+}
+
+#[tauri::command]
+fn create_clip_cmd(url: &str) -> String {
+    let clip = create_clip(url).unwrap();
+    format!("Your clip is {}!", clip)
+}
+
+fn main() {
+    tauri::Builder::default()
+        .invoke_handler(tauri::generate_handler![create_clip_cmd])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
+}
