@@ -4,7 +4,7 @@
 </script>
 
 <nav class="nav flex justify-between flex-row fixed top-2 px-5 w-full list-none decoration-0">
-	<ul class="flex gap-5">
+	<ul class="flex gap-2">
 		<MenuItem url="/">Create a clip</MenuItem>
 		<MenuItem url="/receive">Get a clip</MenuItem>
 		<MenuItem url="/about">About</MenuItem>
