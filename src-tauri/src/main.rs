@@ -52,7 +52,7 @@ fn create_clip (url: &str) -> Result<String, Box<dyn std::error::Error>> {
 
 fn retrieve_clip (code: &str) -> Result<String, Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
-    let res = client.get("https://interclip.app/api/get")
+    let res = client.post("https://interclip.app/api/get")
     .form(&[("code", code)])
     .send()?;
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import UrlInput from '../../lib/components/Urlnput.svelte'
+	import CodeInput from '../../lib/components/CodeInput.svelte'
   </script>
   
   <main class="container">
@@ -9,10 +9,9 @@
 	</p>
   
 	<div class="row">
-	  <UrlInput />
+	  <CodeInput />
 	</div>
   </main>
-
 
 <style>
 

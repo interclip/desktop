@@ -1,11 +1,11 @@
 <script lang="ts">
     import { invoke } from "@tauri-apps/api/tauri";
   
-    let inputUrl = "";
+    let inputCode = "";
     let output = "";
   
     async function greet() {
-      output = await invoke("create_clip_cmd", { url: inputUrl });
+      output = await invoke("retrieve_clip_cmd", { code: inputCode });
     }
   </script>
   
@@ -13,12 +13,14 @@
     <div class="row">
       <form action="#" on:submit={greet}>
         <input
-          type="url"
-          placeholder="https://..."
-          bind:value={inputUrl}
+          type="text"
+          placeholder=""
+          bind:value={inputCode}
+          maxlength="5"
+          minlength="5"
           required
         />
-        <button type="submit">Create</button>
+        <button type="submit">Receive</button>
       </form>
     </div>
     <p>{output}</p>
