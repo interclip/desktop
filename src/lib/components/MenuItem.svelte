@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	export let url;
+	export let url: string;
 </script>
 
 <a href={url}>

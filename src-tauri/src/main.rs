@@ -60,6 +60,10 @@ fn retrieve_clip (code: &str) -> Result<String, Box<dyn std::error::Error>> {
     let response = match res.error_for_status() {
         Ok(resp) => resp,
         Err(err) => {
+            if err.status() == Some(reqwest::StatusCode::NOT_FOUND) {
+                return Err("Clip not found".into());
+            }
+
             println!("Error: {}", err);
             return Err("Error retrieving clip".into());
         }
@@ -73,7 +77,7 @@ fn retrieve_clip (code: &str) -> Result<String, Box<dyn std::error::Error>> {
     };
 
     if resp.status == Status::Error {
-        return Err("Error retrieving clip".into());
+        return Err(resp.result.into());
     }
 
     Ok(resp.result)
@@ -81,14 +85,24 @@ fn retrieve_clip (code: &str) -> Result<String, Box<dyn std::error::Error>> {
 
 #[tauri::command]
 fn create_clip_cmd(url: &str) -> String {
-    let clip = create_clip(url).unwrap();
-    format!("Your clip is {}!", clip)
+    let clip = match create_clip(url) {
+        Ok(clip) => clip,
+        Err(err) => {
+            return format!("Error creating clip: {}", err);
+        }
+    };
+    format!("Your clip code is {}", clip)
 }
 
 #[tauri::command]
 fn retrieve_clip_cmd(code: &str) -> String {
-    let url = retrieve_clip(code).unwrap();
-    format!("Your URL is {}!", url)
+    let url = match retrieve_clip(code) {
+        Ok(url) => url,
+        Err(err) => {
+            return format!("Error retrieving clip: {}", err);
+        }
+    };
+    format!("Your URL is {}", url)
 }
 
 fn main() {

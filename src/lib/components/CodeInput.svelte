@@ -10,7 +10,7 @@
   </script>
   
   <div>
-    <div class="row">
+    <div class="row pb-8">
       <form action="#" on:submit={greet}>
         <input
           type="text"
