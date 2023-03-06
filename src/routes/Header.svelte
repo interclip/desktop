@@ -1,41 +1,16 @@
 <script>
 	import { page } from '$app/stores';
+	import Menu from '$lib/components/Menu.svelte';
 </script>
 
 <header>
-	<div class="corner">
-		<!--
-		<a href="https://interclip.app">
-			<img src={logo} alt="SvelteKit" />
-		</a>
-		-->
-	</div>
-
-	<nav>
-		<ul>
-			<li aria-current={$page.url.pathname === '/' ? 'page' : undefined}>
-				<a href="/">Create</a>
-			</li>
-			<li aria-current={$page.url.pathname === '/receive' ? 'page' : undefined}>
-				<a href="/receive">Receive</a>
-			</li>
-		</ul>
-	</nav>
-
-	<div class="corner">
-
-	</div>
+	<Menu />
 </header>
 
 <style>
 	header {
 		display: flex;
 		justify-content: space-between;
-	}
-
-	.corner {
-		width: 3em;
-		height: 3em;
 	}
 
 	nav {

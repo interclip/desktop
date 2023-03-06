@@ -3,8 +3,8 @@
   </script>
   
   <main class="container">
-	<h1>Interclip</h1>
-	<p>
+	<h1 class="text-3xl mb-4">Interclip</h1>
+	<p class="mb-4">
 	  Input a code.
 	</p>
   
