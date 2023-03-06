@@ -13,12 +13,12 @@ struct Response {
     result: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, PartialEq)]
 pub enum Status {
     #[serde(rename = "success")]
     Success,
     #[serde(rename = "error")]
-    _Error
+    Error
 }
 
 fn create_clip (url: &str) -> Result<String, Box<dyn std::error::Error>> {
@@ -28,6 +28,11 @@ fn create_clip (url: &str) -> Result<String, Box<dyn std::error::Error>> {
         .send()?;
 
     let response: Response = res.json()?;
+
+    if response.status == Status::Error {
+        return Err("Error creating clip".into());
+    }
+
     Ok(response.result)
 }
 

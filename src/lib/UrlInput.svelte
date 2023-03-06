@@ -5,7 +5,7 @@
   let greetMsg = "";
 
   async function greet() {
-    greetMsg = await invoke("create_clip_cmd", { name: inputUrl });
+    greetMsg = await invoke("create_clip_cmd", { url: inputUrl });
   }
 </script>
 
