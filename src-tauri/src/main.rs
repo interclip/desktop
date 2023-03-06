@@ -24,16 +24,30 @@ pub enum Status {
 fn create_clip (url: &str) -> Result<String, Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
     let res = client.post("https://interclip.app/api/set")
-        .form(&[("url", url)])
-        .send()?;
+    .form(&[("url", url)])
+    .send()?;
 
-    let response: Response = res.json()?;
 
-    if response.status == Status::Error {
+    let response = match res.error_for_status() {
+        Ok(resp) => resp,
+        Err(err) => {
+            println!("Error: {}", err);
+            return Err("Error creating clip".into());
+        }
+    };
+
+    let resp = match response.json::<Response>() {
+        Ok(resp) => resp,
+        Err(err) => {
+            return Err(format!("Server response parsing Error: {}", err).into());
+        }
+    };
+
+    if resp.status == Status::Error {
         return Err("Error creating clip".into());
     }
 
-    Ok(response.result)
+    Ok(resp.result)
 }
 
 fn retrieve_clip (code: &str) -> Result<String, Box<dyn std::error::Error>> {
@@ -42,13 +56,27 @@ fn retrieve_clip (code: &str) -> Result<String, Box<dyn std::error::Error>> {
     .form(&[("code", code)])
     .send()?;
 
-    let response: Response = res.json()?;
 
-    if response.status == Status::Error {
+    let response = match res.error_for_status() {
+        Ok(resp) => resp,
+        Err(err) => {
+            println!("Error: {}", err);
+            return Err("Error retrieving clip".into());
+        }
+    };
+
+    let resp = match response.json::<Response>() {
+        Ok(resp) => resp,
+        Err(err) => {
+            return Err(format!("Server response parsing Error: {}", err).into());
+        }
+    };
+
+    if resp.status == Status::Error {
         return Err("Error retrieving clip".into());
     }
 
-    Ok(response.result)
+    Ok(resp.result)
 }
 
 #[tauri::command]
