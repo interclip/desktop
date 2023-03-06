@@ -1,5 +1,4 @@
 <script>
-	import { page } from '$app/stores';
 	import Menu from '$lib/components/Menu.svelte';
 </script>
 
@@ -11,5 +10,9 @@
 	header {
 		display: flex;
 		justify-content: space-between;
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
 	}
 </style>
