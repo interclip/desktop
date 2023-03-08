@@ -107,6 +107,7 @@ fn retrieve_clip_cmd(code: &str) -> String {
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_store::Builder::default().build())
         .invoke_handler(tauri::generate_handler![create_clip_cmd, retrieve_clip_cmd])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

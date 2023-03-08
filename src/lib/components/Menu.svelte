@@ -7,6 +7,7 @@
 	<ul class="flex gap-2">
 		<MenuItem url="/">Create a clip</MenuItem>
 		<MenuItem url="/receive">Get a clip</MenuItem>
+		<MenuItem url="/settings">Settings</MenuItem>
 		<a
 			title="Report a bug"
 			target="_blank"
