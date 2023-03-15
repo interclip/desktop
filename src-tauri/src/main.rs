@@ -4,9 +4,9 @@
 use serde::{Deserialize, Serialize};
 
 /*
-    Sample API response:
-    {"status":"success","result":"k02yl"}
- */
+   Sample API response:
+   {"status":"success","result":"k02yl"}
+*/
 #[derive(serde::Deserialize)]
 struct Response {
     status: Status,
@@ -18,15 +18,15 @@ pub enum Status {
     #[serde(rename = "success")]
     Success,
     #[serde(rename = "error")]
-    Error
+    Error,
 }
 
-fn create_clip (url: &str) -> Result<String, Box<dyn std::error::Error>> {
+fn create_clip(url: &str) -> Result<String, Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
-    let res = client.post("https://interclip.app/api/set")
-    .form(&[("url", url)])
-    .send()?;
-
+    let res = client
+        .post("https://interclip.app/api/set")
+        .form(&[("url", url)])
+        .send()?;
 
     let response = match res.error_for_status() {
         Ok(resp) => resp,
@@ -50,12 +50,12 @@ fn create_clip (url: &str) -> Result<String, Box<dyn std::error::Error>> {
     Ok(resp.result)
 }
 
-fn retrieve_clip (code: &str) -> Result<String, Box<dyn std::error::Error>> {
+fn retrieve_clip(code: &str) -> Result<String, Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
-    let res = client.post("https://interclip.app/api/get")
-    .form(&[("code", code)])
-    .send()?;
-
+    let res = client
+        .post("https://interclip.app/api/get")
+        .form(&[("code", code)])
+        .send()?;
 
     let response = match res.error_for_status() {
         Ok(resp) => resp,
