@@ -21,9 +21,9 @@ jobs:
           git config --global user.name "github-actions[bot]"
       - name: create tag
         run: yarn version --patch
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - uses: actions-ecosystem/action-push-tag@v1
         with:
-          push_options: --follow-tags
+          tag: $(jq -r .version package.json)
   test-tauri:
     name: CI
     needs: create-tag
