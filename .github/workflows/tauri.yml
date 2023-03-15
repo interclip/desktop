@@ -24,9 +24,14 @@ jobs:
       - name: get tag
         id: get_tag
         run: echo ::set-output name=tag::$(jq -r .version package.json)
-      - uses: actions-ecosystem/action-push-tag@v1
+      - name: Git tag
+        uses: pkgdeps/git-tag-action@v2
         with:
-          tag: ${{ steps.get_tag.outputs.tag }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_repo: ${{ github.repository }}
+          git_commit_sha: ${{ github.sha }}
+          version: ${{ steps.get_tag.outputs.tag }}
+          git_tag_prefix: "v"
   test-tauri:
     name: CI
     needs: create-tag
