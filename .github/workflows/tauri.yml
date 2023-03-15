@@ -13,6 +13,8 @@ jobs:
   create-tag:
     name: Create tag
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.get_tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v3
       - name: setup git identity
@@ -70,7 +72,7 @@ jobs:
             src-tauri/target/release/bundle/**/*.AppImage
           if-no-files-found: error
   release:
-    needs: test-tauri
+    needs: [test-tauri]
     name: Release
     runs-on: ubuntu-latest
     steps:
@@ -80,6 +82,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           prerelease: true
+          tag_name: ${{ needs.create-tag.outputs.tag }}
           files: |
             macos-latest/**/*.dmg
             ubuntu-20.04/**/*.deb
