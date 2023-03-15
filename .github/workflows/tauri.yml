@@ -15,15 +15,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: setup git identity
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
       - name: create tag
         run: yarn version --patch
+      - name: get tag
+        id: get_tag
+        run: echo ::set-output name=tag::$(jq -r .version package.json)
       - uses: actions-ecosystem/action-push-tag@v1
         with:
-          tag: $(jq -r .version package.json)
+          tag: ${{ steps.get_tag.outputs.tag }}
   test-tauri:
     name: CI
     needs: create-tag
