@@ -10,7 +10,19 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  create-tag:
+    name: Create tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: create tag
+        run: yarn version --patch
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          push_options: --follow-tags
   test-tauri:
+    name: CI
+    needs: create-tag
     strategy:
       fail-fast: false
       matrix:
@@ -33,7 +45,7 @@ jobs:
       - name: install frontend dependencies
         run: yarn install
       - name: bump version
-        run: yarn version patch
+        run: yarn version --patch
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -47,9 +59,9 @@ jobs:
             src-tauri/target/release/bundle/**/*.deb
             src-tauri/target/release/bundle/**/*.AppImage
           if-no-files-found: error
-
   release:
     needs: test-tauri
+    name: Release
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
@@ -57,6 +69,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
+          prerelease: true
           files: |
             macos-latest/**/*.dmg
             ubuntu-20.04/**/*.deb
