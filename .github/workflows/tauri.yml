@@ -82,7 +82,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           prerelease: true
-          tag_name: ${{ needs.create-tag.outputs.tag }}
+          tag_name: v${{ needs.create-tag.outputs.tag }}
           files: |
             macos-latest/**/*.dmg
             ubuntu-20.04/**/*.deb
