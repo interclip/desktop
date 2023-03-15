@@ -32,6 +32,8 @@ jobs:
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
       - name: install frontend dependencies
         run: yarn install
+      - name: bump version
+        run: yarn version patch
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -45,3 +47,17 @@ jobs:
             src-tauri/target/release/bundle/**/*.deb
             src-tauri/target/release/bundle/**/*.AppImage
           if-no-files-found: error
+
+  release:
+    needs: test-tauri
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            macos-latest/**/*.dmg
+            ubuntu-20.04/**/*.deb
+            windows-latest/**/*.msi
