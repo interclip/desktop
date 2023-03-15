@@ -23,7 +23,7 @@ jobs:
         run: yarn version --patch
       - name: get tag
         id: get_tag
-        run: echo ::set-output name=tag::$(jq -r .version package.json)
+        run: echo "tag=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
       - name: Git tag
         uses: pkgdeps/git-tag-action@v2
         with:
