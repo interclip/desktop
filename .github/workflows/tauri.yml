@@ -72,7 +72,7 @@ jobs:
             src-tauri/target/release/bundle/**/*.AppImage
           if-no-files-found: error
   release:
-    needs: [test-tauri]
+    needs: [test-tauri, create-tag]
     name: Release
     runs-on: ubuntu-latest
     steps:
