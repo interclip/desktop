@@ -12,7 +12,7 @@
 			title="Report a bug"
 			target="_blank"
 			rel="noopener noreferrer"
-			href="https://github.com"
+			href="https://github.com/interclip/iclip-tauri"
 			class="menu-item px-4 py-4 cursor-pointer list-none bg-white rounded-xl dark:bg-gray-600 dark:text-white"
 		>
 			<svg xmlns="http://www.w3.org/2000/svg" class="w-6" fill="currentColor" viewBox="0 0 512 512">
