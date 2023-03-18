@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
    Sample API response:
    {"status":"success","result":"k02yl"}
 */
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, serde::Serialize)]
 struct Response {
     status: Status,
     result: String,
@@ -113,25 +113,25 @@ fn retrieve_clip(
 }
 
 #[tauri::command]
-fn create_clip_cmd(url: &str, options: Option<AdditionalOptions>) -> String {
+fn create_clip_cmd(url: &str, options: Option<AdditionalOptions>) -> Response {
     let clip = match create_clip(url, options) {
-        Ok(clip) => clip,
+        Ok(clip) => Response { status: Status::Success, result: clip },
         Err(err) => {
-            return format!("Error creating clip: {}", err);
+            return Response { status: Status::Error, result: format!("Error creating clip: {}", err) };
         }
     };
-    format!("Your clip code is {}", clip)
+    return clip;
 }
 
 #[tauri::command]
-fn retrieve_clip_cmd(code: &str, options: Option<AdditionalOptions>) -> String {
-    let url = match retrieve_clip(code, options) {
-        Ok(url) => url,
+fn retrieve_clip_cmd(code: &str, options: Option<AdditionalOptions>) -> Response {
+    let clip = match retrieve_clip(code, options) {
+        Ok(url) => Response { status: Status::Success, result: url },
         Err(err) => {
-            return format!("Error retrieving clip: {}", err);
+            return Response { status: Status::Error, result: format!("Error retrieving clip: {}", err) };
         }
     };
-    format!("Your URL is {}", url)
+    return clip;
 }
 
 fn main() {

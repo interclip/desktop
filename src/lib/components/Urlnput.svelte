@@ -1,13 +1,26 @@
 <script lang="ts">
 	import { invoke } from '@tauri-apps/api/tauri';
 	import * as settings from '$lib/utils/settings';
+	import { Status, type Response } from '$lib/types/api';
 
 	let inputUrl = '';
 	let output = '';
+	let code = '';
 
 	async function create() {
 		const endpoint = await settings.get<string>('endpoint');
-		output = await invoke('create_clip_cmd', { url: inputUrl, options: { endpoint } });
+		const response: Response = await invoke('create_clip_cmd', {
+			url: inputUrl,
+			options: { endpoint }
+		});
+
+		if (response.status === Status.Error) {
+			output = response.result;
+			return;
+		} else if (response.status === Status.Success) {
+			output = 'your code: ';
+			code = response.result;
+		}
 	}
 </script>
 
@@ -18,5 +31,8 @@
 			<button type="submit">Create</button>
 		</form>
 	</div>
-	<p>{output}</p>
+	<section>
+		<p>{output}</p>
+		<pre>{code}</pre>
+	</section>
 </div>

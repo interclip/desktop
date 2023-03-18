@@ -1,13 +1,26 @@
 <script lang="ts">
 	import { invoke } from '@tauri-apps/api/tauri';
 	import * as settings from '$lib/utils/settings';
+	import { Status, type Response } from '$lib/types/api';
 
 	let inputCode = '';
 	let output = '';
+	let url = '';
 
 	async function retrieve() {
 		const endpoint = await settings.get<string>('endpoint');
-		output = await invoke('retrieve_clip_cmd', { code: inputCode, options: { endpoint } });
+		const response: Response = await invoke('retrieve_clip_cmd', {
+			code: inputCode,
+			options: { endpoint }
+		});
+
+		if (response.status === Status.Error) {
+			output = response.result;
+			return;
+		} else if (response.status === Status.Success) {
+			output = 'your URL: ';
+			url = response.result;
+		}
 	}
 </script>
 
@@ -25,5 +38,8 @@
 			<button type="submit">Receive</button>
 		</form>
 	</div>
-	<p>{output}</p>
+	<section>
+		<p>{output}</p>
+		<a target="_blank" rel="noreferrer" href={url}>{url}</a>
+	</section>
 </div>
