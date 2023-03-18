@@ -5,7 +5,7 @@
 	let inputCode = '';
 	let output = '';
 
-	async function greet() {
+	async function retrieve() {
 		const endpoint = await settings.get<string>('endpoint');
 		output = await invoke('retrieve_clip_cmd', { code: inputCode, options: { endpoint } });
 	}
@@ -13,7 +13,7 @@
 
 <div>
 	<div class="row pb-8">
-		<form action="#" on:submit={greet}>
+		<form action="#" on:submit={retrieve}>
 			<input
 				type="text"
 				placeholder=""

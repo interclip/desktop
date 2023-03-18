@@ -5,7 +5,7 @@
 	let inputUrl = '';
 	let output = '';
 
-	async function greet() {
+	async function create() {
 		const endpoint = await settings.get<string>('endpoint');
 		output = await invoke('create_clip_cmd', { url: inputUrl, options: { endpoint } });
 	}
@@ -13,7 +13,7 @@
 
 <div>
 	<div class="row pb-8">
-		<form action="#" on:submit={greet}>
+		<form action="#" on:submit={create}>
 			<input type="url" placeholder="https://..." bind:value={inputUrl} required />
 			<button type="submit">Create</button>
 		</form>
