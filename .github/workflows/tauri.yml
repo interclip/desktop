@@ -1,42 +1,46 @@
-name: Rust
+name: 'publish'
 
 on:
   push:
-    branches: ['main']
-  pull_request:
-    branches: ['main']
-
-env:
-  CARGO_TERM_COLOR: always
+    branches:
+      - main
 
 jobs:
-  create-tag:
-    name: Create tag
-    runs-on: ubuntu-latest
+  create-release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-20.04
     outputs:
-      tag: ${{ steps.get_tag.outputs.tag }}
+      release_id: ${{ steps.create-release.outputs.result }}
+
     steps:
       - uses: actions/checkout@v3
-      - name: setup git identity
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-      - name: create tag
-        run: yarn version --patch
-      - name: get tag
-        id: get_tag
-        run: echo "tag=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
-      - name: Git tag
-        uses: pkgdeps/git-tag-action@v2
+      - name: setup node
+        uses: actions/setup-node@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          github_repo: ${{ github.repository }}
-          git_commit_sha: ${{ github.sha }}
-          version: ${{ steps.get_tag.outputs.tag }}
-          git_tag_prefix: "v"
-  test-tauri:
-    name: CI
-    needs: create-tag
+          node-version: 16
+      - name: get version
+        run: echo "PACKAGE_VERSION=$(node -p "require('./package.json').version")" >> $GITHUB_ENV
+      - name: create release
+        id: create-release
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data } = await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: `app-v${process.env.PACKAGE_VERSION}`,
+              name: `Desktop App v${process.env.PACKAGE_VERSION}`,
+              body: 'Take a look at the assets to download and install this app.',
+              draft: true,
+              prerelease: false
+            })
+            return data.id
+
+  build-tauri:
+    needs: create-release
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
@@ -57,33 +61,31 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
       - name: install frontend dependencies
-        run: yarn install
+        run: yarn install # change this to npm or pnpm depending on which one you use
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/upload-artifact@v3
         with:
-          name: ${{ matrix.platform }}
-          path: |
-            src-tauri/target/release/bundle/**/*.app
-            src-tauri/target/release/bundle/**/*.dmg
-            src-tauri/target/release/bundle/**/*.msi
-            src-tauri/target/release/bundle/**/*.deb
-            src-tauri/target/release/bundle/**/*.AppImage
-          if-no-files-found: error
-  release:
-    needs: [test-tauri, create-tag]
-    name: Release
-    runs-on: ubuntu-latest
+          releaseId: ${{ needs.create-release.outputs.release_id }}
+
+  publish-release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-20.04
+    needs: [create-release, build-tauri]
+
     steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v2
-      - name: Release
-        uses: softprops/action-gh-release@v1
+      - name: publish release
+        id: publish-release
+        uses: actions/github-script@v6
+        env:
+          release_id: ${{ needs.create-release.outputs.release_id }}
         with:
-          prerelease: true
-          tag_name: v${{ needs.create-tag.outputs.tag }}
-          files: |
-            macos-latest/**/*.dmg
-            ubuntu-20.04/**/*.deb
-            windows-latest/**/*.msi
+          script: |
+            github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: process.env.release_id,
+              draft: false,
+              prerelease: false
+            })
