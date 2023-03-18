@@ -23,13 +23,15 @@
 	<h1 class="text-3xl mb-4">Settings</h1>
 	<section class="flex flex-col items-left">
 		<label>
-			Interclip host:
+			Interclip URL:
 			<input
-				type="text"
+				type="url"
 				bind:value={endpoint}
 				on:keydown={() => {
-					endpoint = endpoint.trim();
-					set('endpoint', endpoint);
+					setTimeout(() => {
+						endpoint = endpoint.trim();
+						set('endpoint', endpoint);
+					}, 0);
 				}}
 			/>
 		</label>
@@ -37,6 +39,7 @@
 			Copy to clipboard:
 			<input
 				type="checkbox"
+				bind:checked={copyToClipboard}
 				on:change={(e) => {
 					//@ts-ignore
 					if (e?.target instanceof HTMLInputElement) {
