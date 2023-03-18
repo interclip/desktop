@@ -21,10 +21,28 @@ pub enum Status {
     Error,
 }
 
-fn create_clip(url: &str) -> Result<String, Box<dyn std::error::Error>> {
+#[derive(serde::Deserialize)]
+struct AdditionalOptions {
+    endpoint: String,
+}
+
+const DEFAULT_ENDPOINT: &str = "https://interclip.app";
+
+fn create_clip(
+    url: &str,
+    options: Option<AdditionalOptions>,
+) -> Result<String, Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
+
+    let options = match options {
+        Some(options) => options,
+        None => AdditionalOptions {
+            endpoint: DEFAULT_ENDPOINT.to_string(),
+        },
+    };
+
     let res = client
-        .post("https://interclip.app/api/set")
+        .post(format!("{}/api/set", options.endpoint))
         .form(&[("url", url)])
         .send()?;
 
@@ -50,10 +68,21 @@ fn create_clip(url: &str) -> Result<String, Box<dyn std::error::Error>> {
     Ok(resp.result)
 }
 
-fn retrieve_clip(code: &str) -> Result<String, Box<dyn std::error::Error>> {
+fn retrieve_clip(
+    code: &str,
+    options: Option<AdditionalOptions>,
+) -> Result<String, Box<dyn std::error::Error>> {
     let client = reqwest::blocking::Client::new();
+
+    let options = match options {
+        Some(options) => options,
+        None => AdditionalOptions {
+            endpoint: DEFAULT_ENDPOINT.to_string(),
+        },
+    };
+
     let res = client
-        .post("https://interclip.app/api/get")
+        .post(format!("{}/api/get", options.endpoint))
         .form(&[("code", code)])
         .send()?;
 
@@ -84,8 +113,8 @@ fn retrieve_clip(code: &str) -> Result<String, Box<dyn std::error::Error>> {
 }
 
 #[tauri::command]
-fn create_clip_cmd(url: &str) -> String {
-    let clip = match create_clip(url) {
+fn create_clip_cmd(url: &str, options: Option<AdditionalOptions>) -> String {
+    let clip = match create_clip(url, options) {
         Ok(clip) => clip,
         Err(err) => {
             return format!("Error creating clip: {}", err);
@@ -95,8 +124,8 @@ fn create_clip_cmd(url: &str) -> String {
 }
 
 #[tauri::command]
-fn retrieve_clip_cmd(code: &str) -> String {
-    let url = match retrieve_clip(code) {
+fn retrieve_clip_cmd(code: &str, options: Option<AdditionalOptions>) -> String {
+    let url = match retrieve_clip(code, options) {
         Ok(url) => url,
         Err(err) => {
             return format!("Error retrieving clip: {}", err);
