@@ -3,6 +3,20 @@
 
 	let endpoint = 'interclip.app';
 	let copyToClipboard = true;
+	let output = '';
+
+	const save = () => {
+		setTimeout(() => {
+			endpoint = endpoint.trim();
+			try {
+				const url = new URL(endpoint);
+				output = '';
+				set('endpoint', `${url.protocol}//${url.host}`);
+			} catch (e) {
+				output = 'Invalid URL';
+			}
+		}, 0);
+	};
 
 	(async () => {
 		console.debug('Loading settings');
@@ -13,9 +27,6 @@
 
 	$: {
 		console.debug('Settings saved', { endpoint, copyToClipboard });
-		(async () => {
-			console.debug(await get<string>('endpoint'));
-		})();
 	}
 </script>
 
@@ -24,16 +35,7 @@
 	<section class="flex flex-col items-left">
 		<label>
 			Interclip URL:
-			<input
-				type="url"
-				bind:value={endpoint}
-				on:keydown={() => {
-					setTimeout(() => {
-						endpoint = endpoint.trim();
-						set('endpoint', endpoint);
-					}, 0);
-				}}
-			/>
+			<input type="url" bind:value={endpoint} on:blur={save} on:keydown={save} />
 		</label>
 		<label>
 			Copy to clipboard:
@@ -49,6 +51,9 @@
 				}}
 			/>
 		</label>
+		{#if output}
+			<p>{output}</p>
+		{/if}
 	</section>
 </main>
 
