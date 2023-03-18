@@ -1,9 +1,6 @@
 <script>
 	import MenuItem from '$lib/components/MenuItem.svelte';
-	// @ts-ignore
-	import SettingsIcon from '$lib/icons/settings.svg?component';
-	// @ts-ignore
-	import BugIcon from '$lib/icons/bug.svg?component';
+	import { bugIcon, settingsIcon } from '$lib/utils/icons';
 </script>
 
 <nav class="nav flex justify-between flex-row fixed top-2 px-5 w-full list-none decoration-0">
@@ -13,7 +10,7 @@
 	</div>
 	<div class="flex gap-2">
 		<MenuItem title="Show settings" url="/settings">
-			<SettingsIcon />
+			{@html settingsIcon}
 		</MenuItem>
 		<a
 			title="Report a bug"
@@ -22,7 +19,7 @@
 			href="https://github.com/interclip/iclip-tauri"
 			class="menu-item px-4 py-4 cursor-pointer list-none bg-white rounded-xl dark:bg-gray-600 dark:text-white"
 		>
-			<BugIcon />
+			{@html bugIcon}
 		</a>
 	</div>
 </nav>
