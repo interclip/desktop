@@ -37,6 +37,7 @@
 				maxlength="5"
 				minlength="5"
 				required
+				autofocus
 			/>
 			<button type="submit">Receive</button>
 		</form>

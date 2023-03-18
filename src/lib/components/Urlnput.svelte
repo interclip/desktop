@@ -30,7 +30,7 @@
 <div>
 	<div class="row pb-8">
 		<form action="#" on:submit={create}>
-			<input type="url" placeholder="https://..." bind:value={inputUrl} required />
+			<input type="url" placeholder="https://..." bind:value={inputUrl} required autofocus />
 			<button type="submit">Create</button>
 		</form>
 	</div>
