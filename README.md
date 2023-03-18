@@ -6,4 +6,4 @@ Interclip Desktop is the official desktop client for [Interclip](https://intercl
 
 ## Installation 
 
-You can find the download links for all platforms on the [releases page](https://github.com/interclip/iclip-tauri/releases/latest).
+You can find the download links for all platforms on the [releases page](https://github.com/interclip/desktop/releases/latest).
