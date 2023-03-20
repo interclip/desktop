@@ -17,6 +17,7 @@
 
 		if (response.status === Status.Error) {
 			output = response.result;
+			url = '';
 			return;
 		} else if (response.status === Status.Success) {
 			output = 'your URL: ';
