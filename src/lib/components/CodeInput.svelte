@@ -2,7 +2,7 @@
 	import { invoke } from '@tauri-apps/api/tauri';
 	import * as settings from '$lib/utils/settings';
 	import { Status, type Response } from '$lib/types/api';
-	import { copyIfEnabled } from '$lib/utils/copy';
+	import { copyIfEnabled } from '$lib/utils/clipboard';
 
 	let inputCode = '';
 	let output = '';
