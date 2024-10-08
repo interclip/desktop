@@ -2,7 +2,9 @@
 	import { get, set } from '$lib/utils/settings';
 
 	let endpoint = 'interclip.app';
-	let copyToClipboard = true;
+	let copyToClipboard = false;
+	let pasteOnLoad = false;
+
 	let output = '';
 
 	const save = () => {
@@ -22,6 +24,7 @@
 		console.debug('Loading settings');
 		endpoint = (await get<string>('endpoint')) ?? 'interclip.app';
 		copyToClipboard = (await get<boolean>('copyToClipboard')) ?? true;
+		pasteOnLoad = (await get<boolean>('pasteOnLoad')) ?? true;
 		console.debug('Settings loaded', { endpoint, copyToClipboard });
 	})();
 
@@ -48,6 +51,20 @@
 						copyToClipboard = e?.target.checked;
 					}
 					set('copyToClipboard', copyToClipboard);
+				}}
+			/>
+		</label>
+		<label>
+			Paste from clipboard automatically:
+			<input
+				type="checkbox"
+				bind:checked={pasteOnLoad}
+				on:change={(e) => {
+					//@ts-ignore
+					if (e?.target instanceof HTMLInputElement) {
+						pasteOnLoad = e?.target.checked;
+					}
+					set('pasteOnLoad', pasteOnLoad);
 				}}
 			/>
 		</label>

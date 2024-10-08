@@ -2,11 +2,24 @@
 	import { invoke } from '@tauri-apps/api/tauri';
 	import * as settings from '$lib/utils/settings';
 	import { Status, type Response } from '$lib/types/api';
-	import { copyIfEnabled } from '$lib/utils/copy';
+	import { copyIfEnabled } from '$lib/utils/clipboard';
+	import { onMount } from 'svelte';
 
 	let inputUrl = '';
 	let output = '';
 	let code = '';
+
+	onMount(async () => {
+		if (await settings.get('pasteOnLoad')) {
+			console.debug('pasteOnLoad is enabled');
+			const clipboardData = await navigator.clipboard.readText();
+			console.debug('clipboard data:', clipboardData);
+			try {
+				new URL(clipboardData);
+				inputUrl = clipboardData;
+			} catch (e) {}
+		}
+	});
 
 	async function create() {
 		const endpoint = await settings.get<string>('endpoint');
