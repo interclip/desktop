@@ -113,22 +113,34 @@ fn retrieve_clip(
 }
 
 #[tauri::command]
-fn create_clip_cmd(url: &str, options: Option<AdditionalOptions>) -> Response {
-    let clip = match create_clip(url, options) {
-        Ok(clip) => Response { status: Status::Success, result: clip },
+fn create_clip_cmd(url: String, options: Option<AdditionalOptions>) -> Response {
+    let clip = match create_clip(&url, options) {
+        Ok(clip) => Response {
+            status: Status::Success,
+            result: clip,
+        },
         Err(err) => {
-            return Response { status: Status::Error, result: format!("Error creating clip: {}", err) };
+            return Response {
+                status: Status::Error,
+                result: format!("Error creating clip: {}", err),
+            };
         }
     };
     return clip;
 }
 
 #[tauri::command]
-fn retrieve_clip_cmd(code: &str, options: Option<AdditionalOptions>) -> Response {
-    let clip = match retrieve_clip(code, options) {
-        Ok(url) => Response { status: Status::Success, result: url },
+fn retrieve_clip_cmd(code: String, options: Option<AdditionalOptions>) -> Response {
+    let clip = match retrieve_clip(&code, options) {
+        Ok(url) => Response {
+            status: Status::Success,
+            result: url,
+        },
         Err(err) => {
-            return Response { status: Status::Error, result: format!("Error retrieving clip: {}", err) };
+            return Response {
+                status: Status::Error,
+                result: format!("Error retrieving clip: {}", err),
+            };
         }
     };
     return clip;
@@ -136,6 +148,9 @@ fn retrieve_clip_cmd(code: &str, options: Option<AdditionalOptions>) -> Response
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_store::Builder::new().build())
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_store::Builder::default().build())
         .invoke_handler(tauri::generate_handler![create_clip_cmd, retrieve_clip_cmd])
         .run(tauri::generate_context!())

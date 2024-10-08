@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { invoke } from '@tauri-apps/api/tauri';
+	import { invoke } from '@tauri-apps/api/core';
 	import * as settings from '$lib/utils/settings';
 	import { Status, type Response } from '$lib/types/api';
 	import { copyIfEnabled } from '$lib/utils/copy';
